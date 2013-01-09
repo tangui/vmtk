@@ -119,7 +119,12 @@ class vmtkThinPlateSplineDeformation(pypes.pypeScript):
         normalsFilter.SetInput(transformFilter.GetOutput())
         normalsFilter.Update()
         
-        self.DeformedSurface = normalsFilter.GetOutput()
+        #FIXME: the normal filter apparently introduced some holes in some meshes (wtf?). This filter cleans the mesh
+        cleanFilter = vtk.vtkCleanPolyData()
+        cleanFilter.SetInput(normalsFilter.GetOutput())
+        cleanFilter.Update()
+        
+        self.DeformedSurface = cleanFilter.GetOutput()
 
     
     def InitializeSpheres(self):
